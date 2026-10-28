@@ -1,22 +1,15 @@
----
-layout: default
-title: Tradello | AI Sniping Engine
----
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page.title }}</title>
-    <!-- Base CSS -->
-    <link rel="stylesheet" href="{{ '/assets/css/style.css | relative_url }}">
+    <title>Solana Sniping Bot</title>
     
-    <!-- Fonts from the Doc -->
+    <!-- Fonts from your doc -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Override Jekyll Theme for Dark Mode */
+        /* --- EXACT STYLING MATCH FROM DOC --- */
         body {
             background-color: #0a0a0a;
             color: #e0e0e0;
@@ -29,19 +22,6 @@ title: Tradello | AI Sniping Engine
             max-width: 900px;
             margin: 0 auto;
             padding: 20px;
-        }
-
-        /* Hide Jekyll Header/Footer */
-        .site-header, .site-footer, .site-title, .site-description { display: none !important; }
-
-        /* Main Interface */
-        .terminal-container {
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 40px;
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
         }
 
         header {
@@ -144,7 +124,7 @@ title: Tradello | AI Sniping Engine
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Modal */
+        /* Modal Styling */
         .modal {
             display: none;
             position: fixed;
@@ -161,8 +141,9 @@ title: Tradello | AI Sniping Engine
             padding: 25px;
             border-radius: 8px;
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
             color: #ccc;
+            font-family: 'Inter', sans-serif;
         }
 
         .close-btn {
@@ -171,6 +152,27 @@ title: Tradello | AI Sniping Engine
             font-size: 20px;
             color: #666;
         }
+
+        .tutorial-step {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .tutorial-step h4 {
+            margin: 0 0 5px 0;
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .terminal-container {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 40px;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -178,7 +180,7 @@ title: Tradello | AI Sniping Engine
 <div class="container">
     <div class="terminal-container">
         <header>
-            <h1>TRADELLO // SOLANA SNIPER</h1>
+            <h1><img src="tradello-logo.png" alt="Tradello Logo" style="height: 24px; vertical-align: middle;"> TRadello // SOLANA SNIPER</h1>
             <div class="status-indicator" id="status-text">IDLE</div>
         </header>
 
@@ -191,21 +193,32 @@ title: Tradello | AI Sniping Engine
                 <span id="btn-text">CONNECT PHANTOM</span>
                 <div class="spinner" id="loader"></div>
             </button>
-            <button class="btn-secondary" onclick="openModal()">DOCS</button>
+            <button class="btn-secondary" onclick="openModal()">TUTORIAL</button>
         </div>
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Tutorial Modal -->
 <div id="modal" class="modal">
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h3 style="margin-top:0; color:#fff;">How it works</h3>
-        <p style="font-size:14px; line-height:1.5;">
-            1. Connect your Phantom or Axiom wallet.<br>
-            2. Authorize the transaction to enable high-frequency trading.<br>
-            3. Profits are automatically swept to your connected wallet.
-        </p>
+        <h3 style="margin-top:0; color:#fff;">How to use Tradello</h3>
+        
+        <div class="tutorial-step">
+            <h4>Step 1: Connect Wallet</h4>
+            <p style="font-size:14px; line-height:1.5; margin:0;">Click "Connect Phantom". Ensure you are on the Solana network.</p>
+        </div>
+
+        <div class="tutorial-step">
+            <h4>Step 2: Authorize Transaction</h4>
+            <p style="font-size:14px; line-height:1.5; margin:0;">A prompt will appear asking for permission to execute trades. Click "Sign & Confirm".</p>
+        </div>
+
+        <div class="tutorial-step">
+            <h4>Step 3: Start Sniping</h4>
+            <p style="font-size:14px; line-height:1.5; margin:0;">The bot will automatically begin scanning for new pairs. Profits are swept directly to your connected wallet.</p>
+        </div>
+
         <button class="btn-secondary" style="width:100%" onclick="closeModal()">Close</button>
     </div>
 </div>
